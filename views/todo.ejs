@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>todoApp</title>
+    <!-- 引入jquery -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <!-- 引入css文件 -->
+    <link rel="stylesheet" href="public/assets/style.css">
+    <link rel="stylesheet" href="public/assets/reset.min.css">
+</head>
+<body>
+    <header>
+        <form action="localhost:3000" name="form">
+            <div class="header">
+                <input  id="input" type="text"  placeholder="请输入内容">
+                <button type="submit" id="submit">添加</button>
+            </div>
+        </form>
+    </header>
+    <div class="container">
+        <!-- 未完成课表 -->
+        <ul class="unfinished" id="ul">
+            <%todos.forEach(function (item) { %>
+                <li>
+                    <div id="span"><%= item.name %></div>
+                    <div class="unfinsh_button">
+                        <button>已完成</button>
+                        <button>删除</button>
+                    </div>
+                </li>
+            <% }) %>
+        </ul>
+        <!-- 已完成列表 -->
+        <!-- <ul class="finished">
+            <li>
+                已完成一个
+                <div class="finsh_button">
+                    <button>完成</button>
+                    <button>删除</button>
+                </div>
+            </li>
+        </ul> -->
+    </div>
+</body>
+</html>
+<script> 
+    submit.addEventListener('click', function(){
+        var xhr = new XMLHttpRequest();
+        var formData = document.getElementById('input').value
+        console.log(formData)
+        xhr.onreadystatechange = function (req, res) {
+            if(xhr.readyState == 4 && xhr.status == 200) {
+                document.getElementById('input').value = ''
+                location.reload(true)
+            }
+        }
+        xhr.open('post', 'http://localhost:3000/todo', true)
+        xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.send(JSON.stringify({name: formData}))
+        
+    })
+    var ul = document.getElementById('ul')
+    ul.addEventListener('click', function (event) {
+        //拿到对应的数据
+        var value = event.target.parentNode.parentNode.firstChild.nextSibling.firstChild.nodeValue
+        console.log(value)
+        //发送ajax的delete请求
+        var xhr = new XMLHttpRequest()
+        xhr.onreadystatechange = function (req, res) {
+          if(xhr.readyState == 4 && xhr.status == 200) {
+              location.reload()
+            //   console.log(res)
+          }
+        }
+        xhr.open('delete', 'http://localhost:3000/todo', true)
+        xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.send(JSON.stringify({name: value}))
+    })
+    // let formData = new FormData();
+    // formData.append('username', '123');
+    // formData.append('psw', 'psw');
+    // var xhr = new XMLHttpRequest();
+    //    xhr.onreadystatechange = function () {
+    //        if (xhr.readyState == 4) {
+    //         //    if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+    //         //             alert(xhr.responseText);
+    //         //         } else {
+    //         //             alert("Response was unsuccessful:" + xhr.status);
+    //         //         }
+    //              }
+    //         }
+    // xhr.open("post", "http://localhost:3000/todo", true);
+    // xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+
+    // xhr.send(formData)
+</script>
+<style>
+.container {
+    width: 60%;
+    margin: 20px auto;
+
+}
+#span {
+    display: inline-block;
+    position: relative;
+    top: 10px;
+    left: 10px;
+}
+ul li {
+    position: relative;
+    margin: 10px 0px;
+    height: 50px;
+    background-color: white;
+}
+ul li+li {
+    border-top: 0px solid grey;
+}
+span {
+    top: 10px;
+    position: relative;
+    left: 10px;
+}
+.container .unfinished {
+    /* background-color: white; */
+}
+.unfinsh_button {
+    position: absolute;
+    right: 20px;
+    top: 14px;
+}
+.container .finished {
+    margin-top: 20px;
+    background-color: white;
+    padding: 20px;
+}
+.finsh_button {
+    position: absolute;
+    right: 20px;
+    top: 0px;
+}
+</style>
